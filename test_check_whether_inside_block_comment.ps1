@@ -10,6 +10,7 @@ else {
 }
 
 # Load the function
+# - check-whether-inside-block-comment
 . ([System.IO.Path]::Combine($script_dir, 'mmd2latex.ps1'))
 
 # Initialize the state
@@ -26,6 +27,10 @@ $expected_output = @(
 	$false,
 	$false,
 	$false,
+	$true,
+	$true,
+	$true,
+	$true,
 	$true,
 	$true
 )

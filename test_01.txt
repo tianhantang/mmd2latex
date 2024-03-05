@@ -6,3 +6,7 @@ This is inside comment
 This is inside comment
 -->
 The above closes the comment block
+
+The following is false positive
+<!-- hello
+ <!--
