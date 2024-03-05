@@ -6,13 +6,15 @@
 	
 	@param[out]: bool, returns `$true` if the current context is determined to be outside of a block comment based on the input line, otherwise returns `$false`.
 
+	@note: variable validation attribute `AllowEmptyString` is used to allow the input string to be empty. This is necessary because it is ordinary for a text file to contain empty lines.
+
 	@date:
 	- created on 2024-03-05
 #>
 function check-whether-inside-block-comment {
     param(
-        [Parameter(Mandatory = $true)][bool]$state, # Current state: $true if outside a comment block
-        [Parameter(Mandatory = $true)][string]$line # a single line (contains no line break)
+        [Parameter(Mandatory = $true)][bool]$state,								# Current state: $true if outside a comment block
+        [Parameter(Mandatory = $true)][AllowEmptyString()][string]$line			# a single line (contains no line break)
     )
 
     if ($line -eq "<!--") {

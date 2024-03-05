@@ -1,0 +1,8 @@
+@brief: This text file test the removal of HTML style comment block
+
+The following is block comment
+<!--
+This is inside comment
+This is inside comment
+-->
+The above closes the comment block
