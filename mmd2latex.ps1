@@ -1,8 +1,12 @@
 <#
-	@brief: Convert madpang-customized-markdown text to LaTeX 2 text
+	@brief: Convert madpang-customized-markdown (.mmd) text to LaTeX 2 text for manuscript preparation.
 
 	@details:
-	1. Remove the block comments
+	1. Process the .mmd file
+		1.1 Remove the block comments
+		1.2 Remove the line comments
+		1.3 Convert the mmd-style cross-references to LaTeX-style syntax with appropriate prefixes
+		1.4 Convert the mmd-style citations to LaTeX-style syntax with appropriate prefixes
 #>
 
 # Get the execution path
@@ -17,24 +21,24 @@ else {
 # Load the utilities
 . ([System.IO.Path]::Combine($script_dir, 'mmd2latex-utilities.ps1'))
 
-# Initialize variables for the conversion
-$block_comment_state = $true
-
 # Read the INPUT TEXT
-$mmd_lines = Get-Content ([System.IO.Path]::Combine($script_dir, 'test_01.txt')) # @todo: Replace with the actual input file
+$mmd_lines = Get-Content ([System.IO.Path]::Combine($script_dir, 'test_markdown.mmd')) # @todo: Replace with the actual input file
 
 # TEXT PROCESSING
 # /////////////////////////////////////////////////////////
-$output_lines = @()
+$block_comment_state = $true	# Initialize variables for the conversion
+$output_lines = @()				# Initialize the output array
 foreach ($line in $mmd_lines) {
+	$output = $null
 	if ($block_comment_state) {
-		$line | filter-out-line-comment
-	}
-	
-	# Check whether inside a block comment
+		$output = $line | filter-out-line-comment | convert-cross-reference | convert-citation
+	}	
+	# Update the block comment state
 	$block_comment_state = check-whether-inside-block-comment -state $block_comment_state -line $line
-	# Convert the line
-	$line = convert-mmd2latex -line $line -block_comment_state $block_comment_state
-	# Output the line
-	Write-Host $line
+
+	# Append the output to the array
+	$output_lines += $output
 }
+
+# OUTPUT
+Write-Output $output_lines # @note: $null is automatically removed from list
