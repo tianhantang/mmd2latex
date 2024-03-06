@@ -35,3 +35,25 @@ function check-whether-inside-block-comment {
         return $state # No change in state
     }
 }
+
+
+function filter-out-line-comment {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)][AllowEmptyString()][string]$line	# a single line (contains no line break)
+	)
+
+	process {
+		# Check for the exact start of a block comment
+		if ($line -eq "<!--") {
+			return $null
+		}
+		# Check for line comments that start and end on the same line
+		elseif ($line -match '<!--.*?-->') {
+			return $null
+		}
+		# If the line matches neither case, pass it to the next stage in the pipeline
+		else {
+			return $line
+		}
+	}
+}
