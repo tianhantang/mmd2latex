@@ -11,7 +11,7 @@ else {
 
 # Load the function
 # - check-whether-inside-block-comment
-. ([System.IO.Path]::Combine($script_dir, 'mmd2latex.ps1'))
+. ([System.IO.Path]::Combine($script_dir, 'mmd2latex-utilities.ps1'))
 
 # Initialize the state
 $state = $true
