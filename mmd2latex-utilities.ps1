@@ -20,20 +20,20 @@
 	- created on 2024-03-05
 #>
 function check-whether-inside-block-comment {
-    param(
-        [Parameter(Mandatory = $true)][bool]$state,								# Current state: $true if outside a comment block
-        [Parameter(Mandatory = $true)][AllowEmptyString()][string]$line			# a single line (contains no line break)
-    )
+	param(
+		[Parameter(Mandatory = $true)][bool]$state,								# Current state: $true if outside a comment block
+		[Parameter(Mandatory = $true)][AllowEmptyString()][string]$line			# a single line (contains no line break)
+	)
 
-    if ($line -eq "<!--") {
-        return $false # Now inside a block comment
-    }
-    elseif ($line -eq "-->") {
-        return $true # Exiting a block comment
-    }
-    else {
-        return $state # No change in state
-    }
+	if ($line -eq "<!--") {
+		return $false # Now inside a block comment
+	}
+	elseif ($line -eq "-->") {
+		return $true # Exiting a block comment
+	}
+	else {
+		return $state # No change in state
+	}
 }
 
 
