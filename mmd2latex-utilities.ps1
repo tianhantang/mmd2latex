@@ -5,6 +5,7 @@
 	- `check-whether-inside-block-comment`
 	- `filter-out-line-comment`
 	- `convert-cross-reference`
+	- `convert-citation`
 #>
 # ////////////////////////////////////////////////////////////////
 
@@ -137,7 +138,51 @@ function convert-cross-reference {
 	}
 
 	process {
-		# @note: Ordinary -replace operator does not populate the $match variable in a script block directly
+		# @note: Ordinary `-replace` operator does not populate the $match variable in a script block directly
+		$result = [regex]::Replace($line, $pattern, $callback)
+
+		return $result
+	}
+}
+
+<#
+	@brief: Converts mmd-style citation to corresponding LaTeX-style.
+
+	@details:
+	- This function searches for citation in a specific Markdown format, identified by `[@cite:label]`, and converts them into a LaTeX-valid format.
+
+	@param[in]:
+	- $line: The line of text to be processed. This line may contain zero or more citations in the Markdown format that need to be converted to the LaTeX format.
+
+	@example:
+	- Input: "As discussed in [@cite:Smith2020], the results are conclusive."
+	- Output: "As discussed in \cite{Smith2020}, the results are conclusive."
+
+	@date:
+	- created on 2024-03-06
+	- updated on 2024-03-06
+#>
+function convert-citation {
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)][AllowEmptyString()][string]$line	# a single line (contains no line break)
+	)
+
+	begin {
+		# Regular expression to match the citation pattern
+		$pattern = '\[@cite:(?<label>[\w\/\-]+)\]'
+
+		$callback = [System.Text.RegularExpressions.MatchEvaluator]{
+			param($match)
+
+			# Extract the label from the match
+			$label = $match.Groups['label'].Value
+
+			return "\cite{$label}"
+		}
+	}
+
+	process {
+		# @note: Ordinary `-replace` operator does not populate the $match variable in a script block directly
 		$result = [regex]::Replace($line, $pattern, $callback)
 
 		return $result
