@@ -1,6 +1,14 @@
 <#
 	@brief: Checks whether the processing context is inside an HTML block comment based on the current state and the content of the current line.
 
+	@details:
+	- The $state variable should be used to determine whether the *next* line should be passed for further processing.
+	- For general usage, the $state variable should be initialized to $true.
+	- Therefore, the first line is always processed, even if it is a comment block start "<!--".
+	- The comment block end "-->" is discarded if there is any.
+	- The next stage line processor should handle the elimination of any remianing comment block start "<!--".
+	- The next stage line processor should also handle the elmination of one line comment "<!--.-->"
+
 	@param[in]: $state, the current boolean state indicating if the processing context is outside (`$true`) or inside (`$false`) a block comment.
 	@param[in]: $line, a string representing the current line being processed. This line should contain no line breaks.
 	
