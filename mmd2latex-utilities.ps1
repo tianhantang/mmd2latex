@@ -103,37 +103,39 @@ function filter-out-line-comment {
 	- updated on 2024-03-06
 #>
 function convert-cross-reference {
-    param (
-        [string]$line
-    )
+	param (
+		[string]$line
+	)
 
-    # Define a hashtable to map prefixes to their corresponding text
-    $prefixMap = @{
-        'fig' = 'Figure';
-        'eq'  = 'Equation';
-        'tb' = 'Table';
-        'sec' = 'Section'
-    }
+	# Define a hashtable to map prefixes to their corresponding text
+	$prefix_map = @{
+		'fig' = 'Figure';
+		'eq'  = 'Equation';
+		'tb' = 'Table';
+		'sec' = 'Section'
+	}
 
-    # Regular expression to match the reference pattern
-    $refPattern = '\[@ref:(\w+):(\w+)\]'
+	# Regular expression to match the reference pattern
+	# $pattern = '\[@(?<type>\w+):(?<label>\w+)\]'
+	$pattern = '\[@(\w+):(\w+)\]'
 
-    # Find all matches in the line
-    while ($line -match $refPattern) {
-        $fullMatch = $matches[0]
-        $type = $matches[1]
-        $label = $matches[2]
+	$callback = [System.Text.RegularExpressions.MatchEvaluator]{
+		param($match)
 
-        # Determine the prefix text based on the type
-        $prefixText = $prefixMap[$type]
+		# Extract the type and label from the match
+		$type = $match.Groups[1].Value
+		$label = $match.Groups[2].Value
+		$prefix = $prefix_map[$type]
 
-        # If the prefix is found, replace the reference with the LaTeX formatted reference
-        if ($prefixText) {
-            $replacement = "$prefixText \ref{${type}:${label}}"
-            $line = $line -replace [regex]::Escape($fullMatch), $replacement
+        if ($prefix) {
+            return "$prefix \ref{${type}:${label}}"
+        } else {
+            return $match.Value
         }
-		# @todo, there is a potential bug that if the prefix is not found, the program will enter an infinite loop
-    }
+	}
 
-    return $line
+	# @note: Ordinary -replace operator does not populate the $match variable in a script block directly
+	$result = [regex]::Replace($line, $pattern, $callback)
+
+	return $result
 }
