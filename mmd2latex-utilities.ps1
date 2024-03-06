@@ -9,8 +9,9 @@
 	- The next stage line processor should handle the elimination of any remianing comment block start "<!--".
 	- The next stage line processor should also handle the elmination of one line comment "<!--.-->"
 
-	@param[in]: $state, the current boolean state indicating if the processing context is outside (`$true`) or inside (`$false`) a block comment.
-	@param[in]: $line, a string representing the current line being processed. This line should contain no line breaks.
+	@param[in]:
+	- $state: The current boolean state indicating if the processing context is outside (`$true`) or inside (`$false`) a block comment.
+	- $line: A string representing the current line being processed. This line should contain no line breaks.
 	
 	@param[out]: bool, returns `$true` if the current context is determined to be outside of a block comment based on the input line, otherwise returns `$false`.
 
@@ -36,7 +37,22 @@ function check-whether-inside-block-comment {
 	}
 }
 
+<#
+	@brief: Filters out lines that are entirely HTML comments or mark the start of an HTML comment block.
 
+	@details:
+	- This function strictly matches lines that start with "<!--" and end with "-->", representing a complete comment on a single line.
+	- This function also matches lines that are exactly "<!--", marking the start of a block comment.
+	- Lines that match these criteria are not passed to the next stage in the pipeline, effectively filtering them out.
+	- All other lines are passed through unchanged for further processing.
+
+	@param[in]:
+	- $line: The single line of text to be processed. This can include empty strings, as the function is designed to accept and process any string input.
+
+	@param[out]:
+	- Returns $null for lines that match the specified comment patterns, indicating they should be filtered out.
+	- For all other lines, the original line is returned, allowing it to be further processed in the pipeline.
+#>
 function filter-out-line-comment {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)][AllowEmptyString()][string]$line	# a single line (contains no line break)
@@ -48,7 +64,7 @@ function filter-out-line-comment {
 			return $null
 		}
 		# Check for line comments that start and end on the same line
-		elseif ($line -match '<!--.*?-->') {
+		elseif ($line -match '^<!--.*?-->$') {
 			return $null
 		}
 		# If the line matches neither case, pass it to the next stage in the pipeline
