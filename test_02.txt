@@ -1,13 +1,12 @@
 @brief: This text file test the removal of HTML line comment
 
-This line should remain
-<!-- This is a complete comment line -->
-This line should also remain
-<!-- This is NOT considered as a "pure" starting block comment
+This line should remain.
+<!-- This is a complete comment line. -->
+This line should also remain.
+<!-- This is NOT considered as a "pure" starting block comment.
 <!--
-This is inside the comment block
-This is also inside the comment block
+This is inside the comment block, but should remain, since the test only handles line comment.
+This is also inside the comment block, but shoudl remain.
 -->
-<!-- Another complete comment line -->
-NOT the end of comment block -->
-This line remains
+<!-- The above line of block comment end mark should remain, but this one should not. -->
+This line should remain.

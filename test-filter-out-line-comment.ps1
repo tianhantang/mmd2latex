@@ -19,24 +19,22 @@ $lines = Get-Content ([System.IO.Path]::Combine($script_dir, 'test_02.txt'))
 # Output the results (for manual verification)
 $filtered_lines = $lines | filter-out-line-comment
 
-Write-Host "Test Results:"
-Write-Host ">>>"
-$filtered_lines | ForEach-Object {
-	if ($null -ne $_) {
-		Write-Host "`t$_"  # Tab is added for better visual clarity
-	}
-}
-Write-Host "<<<"
+Write-Output "Test Results:"
+Write-Output ">>>"
+Write-Output $filtered_lines # @note: $null is automatically removed from list
+Write-Output "<<<"
 
 <# Expected Output:
 Test Results:
 >>>
-	@brief: This text file test the removal of HTML line comment
+@brief: This text file test the removal of HTML line comment
 
-	This line should remain
-	This line should also remain
-	<!-- This is NOT considered as a "pure" starting block comment
-	NOT the end of comment block -->
-	This line remains
+This line should remain.
+This line should also remain.
+<!-- This is NOT considered as a "pure" starting block comment.
+This is inside the comment block, but should remain, since the test only handles line comment.
+This is also inside the comment block, but shoudl remain.
+-->
+This line should remain.
 <<<
 #>
