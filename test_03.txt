@@ -1,0 +1,11 @@
+@brief: This text file test the conversion of mmd style cross-reference to its LaTeX counterpart
+
+According to [@eq:01], we know that energy equals to mass times the speed of light squared.
+
+Substituting [@eq:01-01] into [@eq:01-02], we arrive at [@eq:01-03]. 
+
+One can refer to [@fig:01] for detailed explanation of [@eq:Ch1/Sec1/04].
+
+[@sec:01] contains [@tb:02].
+
+This line contains an invalid tag [@unknown:01].
