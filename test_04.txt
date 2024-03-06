@@ -1,0 +1,7 @@
+@brief: This text file test the conversion of mmd style citation to its LaTeX counterpart
+
+As discussed in [@cite:Smith2020], the results are conclusive.
+
+This line contains two citations [@cite:Smith2020] and [@cite:Johnson2021].
+
+This line contains an invalid tag [@unknown:01].
