@@ -104,38 +104,42 @@ function filter-out-line-comment {
 #>
 function convert-cross-reference {
 	param (
-		[string]$line
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)][AllowEmptyString()][string]$line	# a single line (contains no line break)
 	)
 
-	# Define a hashtable to map prefixes to their corresponding text
-	$prefix_map = @{
-		'fig' = 'Figure';
-		'eq'  = 'Equation';
-		'tb' = 'Table';
-		'sec' = 'Section'
+	begin {
+		# Define a hashtable to map prefixes to their corresponding text
+		$prefix_map = @{
+			'fig' = 'Figure';
+			'eq'  = 'Equation';
+			'tb' = 'Table';
+			'sec' = 'Section'
+		}
+
+		# Regular expression to match the reference pattern
+		# $pattern = '\[@(?<type>\w+):(?<label>\w+)\]'
+		$pattern = '\[@(?<type>\w+):(?<label>[\w\/\-]+)\]'
+
+		$callback = [System.Text.RegularExpressions.MatchEvaluator]{
+			param($match)
+
+			# Extract the type and label from the match
+			$type = $match.Groups['type'].Value
+			$label = $match.Groups['label'].Value
+			$prefix = $prefix_map[$type]
+
+			if ($prefix) {
+				return "$prefix \ref{${type}:${label}}"
+			} else {
+				return $match.Value
+			}
+		}
 	}
 
-	# Regular expression to match the reference pattern
-	# $pattern = '\[@(?<type>\w+):(?<label>\w+)\]'
-	$pattern = '\[@(?<type>\w+):(?<label>[\w\/\-]+)\]'
+	process {
+		# @note: Ordinary -replace operator does not populate the $match variable in a script block directly
+		$result = [regex]::Replace($line, $pattern, $callback)
 
-	$callback = [System.Text.RegularExpressions.MatchEvaluator]{
-		param($match)
-
-		# Extract the type and label from the match
-		$type = $match.Groups['type'].Value
-		$label = $match.Groups['label'].Value
-		$prefix = $prefix_map[$type]
-
-        if ($prefix) {
-            return "$prefix \ref{${type}:${label}}"
-        } else {
-            return $match.Value
-        }
+		return $result
 	}
-
-	# @note: Ordinary -replace operator does not populate the $match variable in a script block directly
-	$result = [regex]::Replace($line, $pattern, $callback)
-
-	return $result
 }
