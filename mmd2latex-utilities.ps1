@@ -1,3 +1,12 @@
+# ////////////////////////////////////////////////////////////////
+<#
+	@summary:
+	This utility script contains the following functions:
+	- `check-whether-inside-block-comment`
+	- `filter-out-line-comment`
+#>
+# ////////////////////////////////////////////////////////////////
+
 <#
 	@brief: Checks whether the processing context is inside an HTML block comment based on the current state and the content of the current line.
 
