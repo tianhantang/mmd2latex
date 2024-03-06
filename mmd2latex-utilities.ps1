@@ -61,8 +61,11 @@ function check-whether-inside-block-comment {
 	- $line: The single line of text to be processed. This can include empty strings, as the function is designed to accept and process any string input.
 
 	@param[out]:
-	- Returns $null for lines that match the specified comment patterns, indicating they should be filtered out.
-	- For all other lines, the original line is returned, allowing it to be further processed in the pipeline.
+	- Returns $false for lines that match the specified comment patterns, indicating they should be filtered out.
+	- Returns $true for ordinary lines that should be passed to the next stage in the pipeline.
+
+	@note:
+	- Since in PowerShell, if the input parameter is set to [string], it will treat $null as emptry string "", this function is NOT intended to be directly chained in a pipeline, rather it is intended to conditionally chain pipelines.
 #>
 function filter-out-line-comment {
 	param(
@@ -72,15 +75,15 @@ function filter-out-line-comment {
 	process {
 		# Check for the exact start of a block comment
 		if ($line -eq "<!--") {
-			return $null
+			return $false
 		}
 		# Check for line comments that start and end on the same line
 		elseif ($line -match '^<!--.*?-->$') {
-			return $null
+			return $false
 		}
 		# If the line matches neither case, pass it to the next stage in the pipeline
 		else {
-			return $line
+			return $true
 		}
 	}
 }

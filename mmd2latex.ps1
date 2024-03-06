@@ -31,7 +31,7 @@ $output_lines = @()				# Initialize the output array
 foreach ($line in $mmd_lines) {
 	$output = $null
 	if ($block_comment_state) {
-		$output = $line | filter-out-line-comment | convert-cross-reference | convert-citation
+		$output = $line | Where-Object {filter-out-line-comment $_} | convert-cross-reference | convert-citation
 	}	
 	# Update the block comment state
 	$block_comment_state = check-whether-inside-block-comment -state $block_comment_state -line $line
