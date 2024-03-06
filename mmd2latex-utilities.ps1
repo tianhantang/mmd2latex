@@ -117,14 +117,14 @@ function convert-cross-reference {
 
 	# Regular expression to match the reference pattern
 	# $pattern = '\[@(?<type>\w+):(?<label>\w+)\]'
-	$pattern = '\[@(\w+):(\w+)\]'
+	$pattern = '\[@(?<type>\w+):(?<label>[\w\/\-]+)\]'
 
 	$callback = [System.Text.RegularExpressions.MatchEvaluator]{
 		param($match)
 
 		# Extract the type and label from the match
-		$type = $match.Groups[1].Value
-		$label = $match.Groups[2].Value
+		$type = $match.Groups['type'].Value
+		$label = $match.Groups['label'].Value
 		$prefix = $prefix_map[$type]
 
         if ($prefix) {
