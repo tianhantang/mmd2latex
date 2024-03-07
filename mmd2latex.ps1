@@ -12,6 +12,14 @@
 		4. Remove the line comments
 		5. Convert the mmd-style cross-references to LaTeX-style syntax with appropriate prefixes
 		6. Convert the mmd-style citations to LaTeX-style syntax with appropriate prefixes
+
+	@details:
+	As for text insertion to the LaTex template:
+		1. Find the anchor point in the form `@anchor:tag`
+		2. Insert the converted text into the LaTeX manuscript at the anchor point
+	
+	@note:
+	For the current version, the script has to be called multiple times separately, to build the manuscript from a template with multiple anchor points.
 #>
 
 # Get the execution path
