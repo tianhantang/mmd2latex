@@ -1,15 +1,17 @@
 <#
-	@brief: Convert madpang-customized-markdown (.mmd) text to LaTeX 2 text for manuscript preparation.
+	@brief:
+	1. Convert madpang-customized-markdown (.mmd) text to LaTeX 2 text for manuscript preparation.
+	2. Insert the converted text into the LaTeX manuscript at the anchor point.
 
 	@details:
 	The content of the .mmd file is supposed to contain a single `#tag`, after which the actual content are subjected to the conversion.
 	The conversion process includes:
-	1. Process the .mmd file
-		1.1 Starts from the first line after the `#tag`
-		1.2 Remove the block comments
-		1.3 Remove the line comments
-		1.4 Convert the mmd-style cross-references to LaTeX-style syntax with appropriate prefixes
-		1.5 Convert the mmd-style citations to LaTeX-style syntax with appropriate prefixes
+		1. Starts from the first line after the `#tag`
+		2. Remove the leading empty lines
+		3. Remove the block comments
+		4. Remove the line comments
+		5. Convert the mmd-style cross-references to LaTeX-style syntax with appropriate prefixes
+		6. Convert the mmd-style citations to LaTeX-style syntax with appropriate prefixes
 #>
 
 # Get the execution path
@@ -31,6 +33,7 @@ $mmd_lines = Get-Content ([System.IO.Path]::Combine($script_dir, 'test_markdown.
 # /////////////////////////////////////////////////////////
 $tag_pattern = '^#(?<tag>\w[\w/_\-]+)'	# Define the pattern for the tag
 $start_conversion = $false				# Initialize variables for the conversion
+$first_non_empty_line = $false			# Initialize variables for the conversion
 $block_comment_state = $true			# Initialize variables for the conversion ($true for normal text)
 $output_lines = @()						# Initialize the output array
 # ---
@@ -41,7 +44,16 @@ foreach ($line in $mmd_lines) {
 		if ($line -match $tag_pattern) {
 			$start_conversion = $true
 		}
-		continue # Skip the line
+		continue # Skip the lines till the line containing tag altogether
+	}
+
+	# Check whether the first non-empty line is reached
+	if (-not $first_non_empty_line) {
+		if ($line -match '\S') {
+			$first_non_empty_line = $true
+		} else {
+			continue # Skip the empty line
+		}
 	}
 
 	# Process the line
