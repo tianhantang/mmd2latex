@@ -1,7 +1,6 @@
 <#
 	@brief:
-	1. Convert madpang-customized-markdown (.mmd) text to LaTeX 2 text for manuscript preparation.
-	2. Insert the converted text into the LaTeX manuscript at the anchor point.
+	Convert madpang-customized-markdown (.mmd) text to LaTeX 2 text for manuscript preparation.
 
 	@details:
 	The content of the .mmd file is supposed to contain a single `#tag`, after which the actual content are subjected to the conversion.
@@ -13,14 +12,17 @@
 		5. Convert the mmd-style cross-references to LaTeX-style syntax with appropriate prefixes
 		6. Convert the mmd-style citations to LaTeX-style syntax with appropriate prefixes
 
-	@details:
-	As for text insertion to the LaTex template:
-		1. Find the anchor point in the form `@anchor:tag`
-		2. Insert the converted text into the LaTeX manuscript at the anchor point
-	
-	@note:
-	For the current version, the script has to be called multiple times separately, to build the manuscript from a template with multiple anchor points.
+	@param[in]:
+	- Path to the .mmd file
+
+	@date:
+	- Created on 2024-03-07
+	- Updated on 2024-03-08
 #>
+
+param(
+	[Parameter(Mandatory = $True, Position = 1)][string]$path2mmd
+)
 
 # Get the execution path
 $entry_point = Get-ItemProperty $MyInvocation.MyCommand.Path
@@ -35,7 +37,7 @@ else {
 . ([System.IO.Path]::Combine($script_dir, 'mmd2latex-utilities.ps1'))
 
 # Read the INPUT TEXT
-$mmd_lines = Get-Content ([System.IO.Path]::Combine($script_dir, 'test_markdown.mmd')) # @todo: Replace with the actual input file
+$mmd_lines = Get-Content -Path $path2mmd
 
 # TEXT PROCESSING
 # /////////////////////////////////////////////////////////
@@ -80,4 +82,4 @@ foreach ($line in $mmd_lines) {
 }
 
 # OUTPUT
-Write-Output $output_lines # @note: $null is automatically removed from list
+return $output_lines # @note: $null is automatically removed from list
