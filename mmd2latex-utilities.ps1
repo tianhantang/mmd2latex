@@ -1,11 +1,17 @@
 # ////////////////////////////////////////////////////////////////
 <#
-	@summary:
+	@brief:
 	This utility script contains the following functions:
 	- `check-whether-inside-block-comment`
 	- `filter-out-line-comment`
 	- `convert-cross-reference`
 	- `convert-citation`
+
+	@details:
+	Functions are generally falls into categories of
+	- block processing
+	- line processing
+	- character processing
 #>
 # ////////////////////////////////////////////////////////////////
 
@@ -187,6 +193,33 @@ function convert-citation {
 	process {
 		# @note: Ordinary `-replace` operator does not populate the $match variable in a script block directly
 		$result = [regex]::Replace($line, $pattern, $callback)
+
+		return $result
+	}
+}
+
+<#
+	@brief: Handle LaTeX special characters by escaping them.
+
+	@param[in]:
+	- $line: The line of text to be processed. This line may contain zero or more LaTeX special characters that need to be escaped.
+
+	@example:
+	- Input: "It can scattering 100% of the incident acoustic wave."
+	- Output: "It can scattering 100\% of the incident acoustic wave."
+
+	@note:
+	- Currently this function only handles `#`, `%`.
+	- This is because the mmd is supposed to allow embeded LaTeX code.
+#>
+function escape-special-characters {
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)][AllowEmptyString()][string]$line	# a single line (contains no line break)
+	)
+
+	process {
+		# Escape special characters
+		$result = $line -replace '#', '\#' -replace '%', '\%'
 
 		return $result
 	}
